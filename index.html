@@ -126,6 +126,10 @@
         console.error(err);
       });
 
+    function normalize(text) {
+      return (text || "").toLowerCase().replace(/\s+/g, "");
+    }
+
     function searchQA() {
       const query = document.getElementById("queryInput").value.trim();
       const resultsContainer = document.getElementById("results");
@@ -136,9 +140,18 @@
         return;
       }
 
-      const results = qaData.filter((item) =>
-        item.question.includes(query)
-      );
+      const normalizedQuery = normalize(query);
+
+      const results = qaData.filter((item) => {
+        const question = normalize(item.question);
+        const context = normalize(item.context);
+        const answer = normalize(item.answers[0]?.text);
+        return (
+          question.includes(normalizedQuery) ||
+          context.includes(normalizedQuery) ||
+          answer.includes(normalizedQuery)
+        );
+      });
 
       if (results.length === 0) {
         resultsContainer.innerText = "一致する質問が見つかりませんでした。";
@@ -150,7 +163,7 @@
         card.className = "qa-card";
         card.innerHTML = `
           <div class="question">Q：${item.question}</div>
-          <div class="answer">A：${item.answers[0].text}</div>
+          <div class="answer">A：${item.answers[0]?.text || "（回答なし）"}</div>
           <div class="source">
             出典：<a href="${item.source_url}" target="_blank" rel="noopener noreferrer">${item.source_title}</a>
           </div>
