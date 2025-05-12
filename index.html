@@ -112,10 +112,9 @@
     <button onclick="searchQA()">検索</button>
   </div>
   <div id="results"></div>
-<p style="text-align:center; font-size: 0.9rem; color: #555;">
+  <p style="text-align:center; font-size: 0.9rem; color: #555;">
     ※キーワードの完全一致ではなく、<strong>文脈で使用されている場合</strong>も検索結果に表示されます。
   </p>
-
 
   <script>
     let qaData = [];
@@ -175,6 +174,14 @@
         resultsContainer.appendChild(card);
       });
     }
+
+    // ✅ Enterキーで検索を実行する処理を追加
+    document.getElementById("queryInput").addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        searchQA();
+      }
+    });
   </script>
 </body>
 </html>
